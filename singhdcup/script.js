@@ -21,22 +21,25 @@ async function loadVideos() {
   try {
     const response = await fetch("videos.json");
     videos = await response.json();
-    startGame(); // 바로 16강 시작
+    document.getElementById("setup").style.display = "block";
   } catch (err) {
     console.error("영상 데이터를 불러오는 중 오류 발생:", err);
   }
 }
 
 function startGame() {
+  const sensitive = document.getElementById("filterSensitive").checked;
+  
   if (videos.length < 16) {
     alert("영상 개수가 부족합니다! 최소 16개 필요");
     return;
   }
-
+  
+  document.getElementById("setup").style.display = "none";
   document.getElementById("game-container").style.display = "flex";
   document.getElementById("results").innerHTML = "";
 
-  allCompetitors = shuffle([...videos]).slice(0, 16);
+  allCompetitors = shuffle([...videos.filter(currentItem => !sensitive || !currentItem.political)]).slice(0, 16);
 
   currentRound = [...allCompetitors];
   nextRound = [];
